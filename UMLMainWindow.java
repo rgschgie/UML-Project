@@ -7,7 +7,6 @@ public class UMLMainWindow extends JFrame {
 	
 	UMLMainWindow()
 	{
-
 		setTitle("UML Diagram Editor");
 		setSize(1000, 600);
 		setLocationRelativeTo(null);

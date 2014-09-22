@@ -1,22 +1,27 @@
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 
 @SuppressWarnings("serial")
 public class UMLCanvas extends JPanel implements MouseListener {
 
+	@SuppressWarnings("unused")
 	private Image img = null; 	// We Can load an image to use as our background, 
 								// perhaps an image with 'dots' for 'alignment' purposes?
 	
+	
+	static final int Z_TOP_CHILD 	= 0;
+	private static UMLShape lastSelectedShape = null;
+	
 	private UMLToolBar umlToolBar = null; // Used to track state of the toggle buttons (better way perhaps?)
-	private UMLPopupMenu umlPopupMenu;	
-	private ArrayList<UMLShape> umlShapes = new ArrayList<UMLShape>();
+	private UMLPopupMenu umlPopupMenu = null;	
+	
 	
 	UMLCanvas()
 	{
@@ -24,6 +29,10 @@ public class UMLCanvas extends JPanel implements MouseListener {
 		
 		umlPopupMenu = new UMLPopupMenu();
 		addMouseListener(this);
+		
+		
+		this.setBackground(Color.WHITE);
+		this.setLayout(null);
 		
 		
 	}
@@ -43,59 +52,104 @@ public class UMLCanvas extends JPanel implements MouseListener {
 		umlToolBar = toolbar;
 	}
 	
-	
-	public void paint(Graphics g)
+	public void setLastSelected(UMLShape s)
 	{
-		
-		if(img != null)
-		{
-			g = img.getGraphics();
-			g.drawImage(img, 0,  0,  null);			
-		}
-		else
-		{
-			g.setColor(Color.white);
-			g.drawRect(0, 0, this.getBounds().width, this.getBounds().height);
-			
-			g.setColor(Color.BLACK);
-			g.drawRoundRect(50,  50, 100, 100, 10, 10);
-		}
-		
-			
-		for(int i = 0; i < umlShapes.size(); i++)
-		{
-			umlShapes.get(i).draw(g);
-		}
-		
+		lastSelectedShape = s;
 	}
 	
+	public UMLShape getLastSelected()
+	{
+		return lastSelectedShape;
+	}
+	
+	
+	public void updateSelectedShape(UMLShape newSelectedShape)
+	{
+		if(newSelectedShape == null)
+		{
+			System.out.println("newSelected == null");
+			return;
+		}
+		
+		// If this is the same shape as last time bail out
+		if(newSelectedShape == lastSelectedShape)
+		{
+			System.out.println("newSelectedShape == lastSelectedShape");
+			return;
+		}
+		
+		
+		if(lastSelectedShape != null)
+		{
+			System.out.println("lastSelectedShape != null");
+			
+			// Update the last selected shape's selected state to false
+			lastSelectedShape.setSelected(false);
+		}
+		
+		System.out.println("before update");
+		
+		// Update the new selected shape's z order and set it's selected state to true
+		this.setComponentZOrder(newSelectedShape, Z_TOP_CHILD);
+		newSelectedShape.setSelected(true);
+		
+		
+		System.out.println("before last selected update");
+		// Set the new lastSelectedState
+		lastSelectedShape = newSelectedShape;
+		
+		// repaint
+		this.repaint();
+		
+		
+		System.out.println("lastSelectedShape = " + lastSelectedShape);
+		
+	}
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-		if(umlToolBar != null)
+
+		if(e.getButton() == MouseEvent.BUTTON1 && umlToolBar != null)
 		{
-			// TODO Do a loop and take the correct action based on the toggled button
-			// umlToolBar.getToggledButtons(); <-- add toggle buttons to an array list
+		
+			// Check if there is a child at this location first
+			Component c = this.findComponentAt(e.getX(), e.getY());
+			System.out.println("x: " + e.getX() + " y: " + e.getY() + "  findComponentAt.class = " + c.getClass());
 			
-			// Check if the class toggle button is selected
-			if(umlToolBar.getUMLShape_Class().isSelected())
+			// If the left mouse click is inside the canvas object .. check if any toggle buttons are selected
+			// if so create a new object at the mouse position
+			if(c.getClass() == this.getClass())
 			{
+				// TODO Do a loop and take the correct action based on the toggled button
+				// umlToolBar.getToggledButtons(); <-- add toggle buttons to an array list
+
+				// One for now - add more later
+				// Check if the class toggle button is selected
+				if(umlToolBar.getBtnShape_Class().isSelected())
+				{
 				
-			
-				umlShapes.add(new UMLShape_Class(e.getX(), e.getY(), false));
-				this.invalidate();
-				this.paint(this.getGraphics());
-				
-								
-				// De-select the class shape? or leave toggled to create more class objects?
-				// Design decision we need to decide on.
+					this.add(new UMLShape_Class(e.getX(), e.getY(), false));
+					this.repaint();										
+									
+					// De-select the class shape? or leave toggled to create more class objects?
+					// Design decision we need to decide on.
+				}
+			}
+
+			// If the class at the location x,y is of a UMLShape, set it's selection to true
+			else if(c instanceof UMLShape)
+			{
+				updateSelectedShape((UMLShape)c);
 			}
 		}
 		
+		
+		
 	}
 
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -110,8 +164,7 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		showPopup(e);
-		
+			showPopup(e);
 	}
 
 	@Override

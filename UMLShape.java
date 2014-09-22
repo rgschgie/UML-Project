@@ -1,22 +1,19 @@
-import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.event.MouseListener;
 
-public abstract class UMLShape {
-	protected Point ptTopLeft = new Point();
+import javax.swing.JPanel;
+
+@SuppressWarnings("serial")
+public abstract class UMLShape extends JPanel implements MouseListener{
+	
 	protected boolean isSelected = false;
-
-	
-	UMLShape()
-	{
-		ptTopLeft.x = 0;
-		ptTopLeft.y = 0;
-	}
-	
 	
 	UMLShape(int x, int y, boolean selected)
 	{
-		ptTopLeft.x = x;
-		ptTopLeft.y = y;
+		this.setLocation(x, y);
+		this.setSize(100, 100);
+
+		this.setVisible(true);
+
 		isSelected = selected;
 	}
 	
@@ -29,7 +26,5 @@ public abstract class UMLShape {
 	{
 		return isSelected;
 	}
-	
-	
-	abstract public void draw(Graphics g);
+
 }
