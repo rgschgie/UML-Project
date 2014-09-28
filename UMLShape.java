@@ -1,9 +1,10 @@
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public abstract class UMLShape extends JPanel implements MouseListener{
+public abstract class UMLShape extends JPanel implements MouseListener, MouseMotionListener{
 	
 	protected boolean isSelected = false;
 	

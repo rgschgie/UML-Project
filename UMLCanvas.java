@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 
 @SuppressWarnings("serial")
@@ -110,7 +109,7 @@ public class UMLCanvas extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-
+		// If the left mouse button is pressed and the umlToolbar is valid
 		if(e.getButton() == MouseEvent.BUTTON1 && umlToolBar != null)
 		{
 		
@@ -164,7 +163,7 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-			showPopup(e);
+		showPopup(e);
 	}
 
 	@Override
