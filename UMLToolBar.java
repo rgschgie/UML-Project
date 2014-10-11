@@ -68,6 +68,11 @@ public class UMLToolBar extends JToolBar implements ActionListener{
 	{
 		return btnShape_Class;
 	}
+	
+	JToggleButton getBtnShape_Line()
+	{
+		return btnShape_Line;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
