@@ -2,18 +2,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JTextArea;
-
-
-//import javax.swing.JTextArea;
 
 
 @SuppressWarnings("serial")
 public class UMLShape_Class extends UMLShape{
 	
 	private JTextArea classText = new JTextArea("Class Name\n____________\nFunctions\n____________\nVariables");
+	private Point mousePosition;
 	
 	UMLShape_Class(int x, int y, boolean selected)
 	{
@@ -27,10 +26,13 @@ public class UMLShape_Class extends UMLShape{
 		classText.setFocusable(false);
 		
 		classText.addMouseListener(this);
+		classText.addMouseMotionListener(this);
 		
 		this.add(classText);
 	}
 
+		
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -47,7 +49,9 @@ public class UMLShape_Class extends UMLShape{
 			
 				c.updateSelectedShape(s);
 			}
-		}		
+		}
+				
+		
 	}
 
 	@Override
@@ -73,7 +77,44 @@ public class UMLShape_Class extends UMLShape{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// Update this objects location based on the mouse position		
+		setUMLShape_Location(arg0.getX(), arg0.getY());
+	}
 
+	public void setUMLShape_Location(double x, double y)
+	{
+		// Get the current x,y location for this UMLShape class object
+		double curX = this.getLocation().getX();
+		double curY = this.getLocation().getY();
+		
+		// Update the current location , the x,y values passed in
+		// are used and called from the JTextArea that takes up
+		// the UMLShape_Class's "child area" so all values are translated
+		// from that object and handled by this (UMLShape_Class) with
+		// the childs offset. So add the drag x/y position to the 
+		// UMLShape_Class current x/y and then move the UMLShape_Class
+		// up and to the left based on the mouse position, this helps
+		// ensure that we have a fluid motion of dragging as the cursor will always
+		// stay within the bounds of the JTextArea. 
+		this.setLocation((int)(curX + x - mousePosition.x),
+						(int)(curY + y - mousePosition.y));
+	}
+
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// Save the position of the mouse location.
+		// This is needed to help ensure we have a fluid movement
+		// when dragging the class object around.
+		mousePosition = arg0.getPoint();
+		
+	}
+
+	
+		
 	public void paintComponent(Graphics g)
 	{
 			
@@ -84,11 +125,7 @@ public class UMLShape_Class extends UMLShape{
 		g2D.drawString("Hello", 4+1,  12);
 		*/
 		
-		
-		
-		
-		
-		//super.paintComponent(g);
+		super.paintComponent(g);
 	
 		// Background and border
 		g.setColor(Color.WHITE);
@@ -96,7 +133,6 @@ public class UMLShape_Class extends UMLShape{
 		
 		Graphics2D g2D = (Graphics2D)g;
 		g2D.setStroke(new BasicStroke(2F));
-		
 						
 		// If this is selected, draw an outline indicating it is
 		if(isSelected)
@@ -104,17 +140,20 @@ public class UMLShape_Class extends UMLShape{
 			// Draw a highlighted border
 			g2D.setColor(Color.YELLOW);
 			g2D.drawRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
-
+		
 		}
-
 		else
 		{
+			
 			// Draw normal
 			g2D.setColor(Color.BLACK);
 			g2D.drawRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
-
-			
+		
 		}
 		
+		
+		
+
 	}
+
 }

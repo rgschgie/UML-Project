@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,46 +12,56 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 	@SuppressWarnings("unused")
 	private Image img = null; 	// We Can load an image to use as our background, 
-	// perhaps an image with 'dots' for 'alignment' purposes?
-
-
+								// perhaps an image with 'dots' for 'alignment' purposes?
+	
+	
 	static final int Z_TOP_CHILD 	= 0;
-	private static UMLShape lastSelectedShape = null;
+	private static UMLShape firstSelectedShape = null;
 	private static UMLShape secondSelectedShape = null;
-
+	
 	private UMLToolBar umlToolBar = null; // Used to track state of the toggle buttons (better way perhaps?)
 	private UMLPopupMenu umlPopupMenu = null;	
-
-
+	
+	
 	UMLCanvas()
 	{
 		// TODO Initialization code as needed
-
+		
 		umlPopupMenu = new UMLPopupMenu();
 		addMouseListener(this);
-
-
+		
+		
 		this.setBackground(Color.WHITE);
 		this.setLayout(null);
-
-
+		
+		
 	}
-
-
+	
+	
 	// Overload to set the background image to draw in paint update if we wish to add
 	// a dotted background on the canvas
 	UMLCanvas(Image imgObject)
 	{
 		img = imgObject;
 	}
-
-
-
+	
+	
+	
 	public void setUMLToolBar(UMLToolBar toolbar)
 	{
 		umlToolBar = toolbar;
 	}
-
+	
+	public void setLastSelected(UMLShape s)
+	{
+		firstSelectedShape = s;
+	}
+	
+	public UMLShape getLastSelected()
+	{
+		return firstSelectedShape;
+	}
+	
 	public void setSecondSelected(UMLShape s)
 	{
 		secondSelectedShape = s;
@@ -62,18 +71,8 @@ public class UMLCanvas extends JPanel implements MouseListener {
 	{
 		return secondSelectedShape;
 	}
-
-	public void setLastSelected(UMLShape s)
-	{
-		lastSelectedShape = s;
-	}
-
-	public UMLShape getLastSelected()
-	{
-		return lastSelectedShape;
-	}
-
-
+	
+	
 	public void updateSelectedShape(UMLShape newSelectedShape)
 	{
 		if (umlToolBar.getBtnShape_Class().isSelected())
@@ -85,19 +84,19 @@ public class UMLCanvas extends JPanel implements MouseListener {
 			}
 
 			// If this is the same shape as last time bail out
-			if (newSelectedShape == lastSelectedShape)
+			if (newSelectedShape == firstSelectedShape)
 			{
-				System.out.println("newSelectedShape == lastSelectedShape");
+				System.out.println("newSelectedShape == firstSelectedShape");
 				return;
 			}
 
 
-			if (lastSelectedShape != null)
+			if (firstSelectedShape != null)
 			{
-				System.out.println("lastSelectedShape != null");
+				System.out.println("firstSelectedShape != null");
 
 				// Update the last selected shape's selected state to false
-				lastSelectedShape.setSelected(false);
+				firstSelectedShape.setSelected(false);
 			}
 
 			if (secondSelectedShape == null)
@@ -116,27 +115,29 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 			System.out.println("before last selected update");
 			// Set the new lastSelectedState
-			lastSelectedShape = newSelectedShape;
+			firstSelectedShape = newSelectedShape;
 
 			// repaint
 			this.repaint();
 
-			System.out.println("lastSelectedShape = " + lastSelectedShape);
+			System.out.println("firstSelectedShape = " + firstSelectedShape);
 
 		}
 
+		
+		
 		if(umlToolBar.getBtnShape_Line().isSelected())
 		{
-			if (lastSelectedShape != null && secondSelectedShape == null)
+			if (firstSelectedShape != null && secondSelectedShape == null)
 			{	
 				//second shape is the same as the first
-				if (lastSelectedShape == newSelectedShape)
+				if (firstSelectedShape == newSelectedShape)
 				{
-					System.out.println("lastSelectedShape == newSelectedShape");
+					System.out.println("firstSelectedShape == newSelectedShape");
 					return;
 				}
 				// second shape is different from first, 
-				if (lastSelectedShape != newSelectedShape)
+				if (firstSelectedShape != newSelectedShape)
 				{
 					System.out.println("First is selected, second isn't");
 					secondSelectedShape = newSelectedShape;
@@ -144,29 +145,23 @@ public class UMLCanvas extends JPanel implements MouseListener {
 					this.setComponentZOrder(newSelectedShape, Z_TOP_CHILD);
 					
 					
-					if (lastSelectedShape != null && secondSelectedShape != null)
+					if (firstSelectedShape != null && secondSelectedShape != null)
 					{
 						System.out.println("Reached Here");
 						
-						System.out.println("Coordinates for lastSeletedShape: " +lastSelectedShape.getX() +  " , " + lastSelectedShape.getY());
+						System.out.println("Coordinates for firstSeletedShape: " +firstSelectedShape.getX() +  " , " + firstSelectedShape.getY());
 						System.out.println("Coordinates for secondSeletedShape: " +secondSelectedShape.getX() +  " , " + secondSelectedShape.getY());
 						
 						
-						this.add(new UMLLine(lastSelectedShape.getX(), lastSelectedShape.getY(), secondSelectedShape.getX(), secondSelectedShape.getY(), this));
+						
+						this.add(new UMLLine(firstSelectedShape, secondSelectedShape, this));
 						
 						
 						System.out.println("Reached Here");
 						this.repaint();
 						
-						
-					
-						
-						
-						//System.out.println("Coordinates for lastSeletedShape: " +lastSelectedShape.getX() +  " , " + lastSelectedShape.getY());
-						//System.out.println("Coordinates for secondSeletedShape: " +secondSelectedShape.getX() +  " , " + secondSelectedShape.getY());
-						
 					}
-					newSelectedShape = null;
+					firstSelectedShape = null;
 					secondSelectedShape = null;
 					return;
 
@@ -174,10 +169,10 @@ public class UMLCanvas extends JPanel implements MouseListener {
 				
 			}
 			// check to see if its the first shape
-			if (lastSelectedShape == null && secondSelectedShape == null)
+			if (firstSelectedShape == null && secondSelectedShape == null)
 			{
 				System.out.println("No Shapes Selected");
-				lastSelectedShape = newSelectedShape;
+				firstSelectedShape = newSelectedShape;
 				System.out.println("First shape is selected");
 				this.setComponentZOrder(newSelectedShape, Z_TOP_CHILD);
 			}
@@ -186,28 +181,28 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 		}
 	}
-
+		
+		
+		
+		
+		
+		
+		
+		
+	
+	
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-		
-		if(e.getButton() == MouseEvent.BUTTON3)
-		{
-			for (int i = 0; i < this.getComponentCount(); ++i ){
-			System.out.println(this.getComponent(i));
-			}
-			
-			this.repaint();
-		}
-		
-		
+		// If the left mouse button is pressed and the umlToolbar is valid
 		if(e.getButton() == MouseEvent.BUTTON1 && umlToolBar != null)
 		{
-
+		
 			// Check if there is a child at this location first
 			Component c = this.findComponentAt(e.getX(), e.getY());
 			System.out.println("x: " + e.getX() + " y: " + e.getY() + "  findComponentAt.class = " + c.getClass());
-
+			
 			// If the left mouse click is inside the canvas object .. check if any toggle buttons are selected
 			// if so create a new object at the mouse position
 			if(c.getClass() == this.getClass())
@@ -217,12 +212,12 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 				// One for now - add more later
 				// Check if the class toggle button is selected
-
 				if(umlToolBar.getBtnShape_Class().isSelected())
 				{
+				
 					this.add(new UMLShape_Class(e.getX(), e.getY(), false));
 					this.repaint();										
-
+									
 					// De-select the class shape? or leave toggled to create more class objects?
 					// Design decision we need to decide on.
 				}
@@ -234,21 +229,22 @@ public class UMLCanvas extends JPanel implements MouseListener {
 				updateSelectedShape((UMLShape)c);
 			}
 		}
+		
+		
+		
 	}
 
-
-
-
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -258,10 +254,8 @@ public class UMLCanvas extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		showPopup(e);
 		
-		
-		//showPopup(e);
-
 	}
 
 	private void showPopup(MouseEvent e)
@@ -271,10 +265,4 @@ public class UMLCanvas extends JPanel implements MouseListener {
 			umlPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
 	}
-	}
-	
-	
-	
-	
-	
-
+}

@@ -12,6 +12,7 @@ public class UMLToolBar extends JToolBar implements ActionListener{
 
 	private JToggleButton	btnShape_Class = null;
 	private JToggleButton	btnShape_Line = null;
+
 	
 	
 	UMLToolBar(String name, int type)

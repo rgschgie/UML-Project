@@ -1,14 +1,14 @@
 ///*
 import java.awt.Color; 
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 
 public class UMLLine extends JPanel{
-
+	
+	UMLShape firstSelectedShape = null;
+	UMLShape secondSelectedShape = null;
+	
 	int firstX;
 	int firstY;
 	int secondX;
@@ -22,20 +22,25 @@ public class UMLLine extends JPanel{
 //	 */
 	private static final long serialVersionUID = 1L;
 
-	public UMLLine(int lastSelectedShapeX, int lastSelectedShapeY, int secondSelectedShapeX, int secondSelectedShapeY, UMLCanvas mycanvas)
+	public UMLLine(UMLShape firstSelectedShape, UMLShape secondSelectedShape, UMLCanvas mycanvas)
 	{
 		this.setOpaque(false);
 		
+		this.firstSelectedShape = firstSelectedShape;
+		this.secondSelectedShape = secondSelectedShape;
+		
+		/*
 		firstX = lastSelectedShapeX;
 		firstY = lastSelectedShapeY;
 		secondX = secondSelectedShapeX;
 		secondY = secondSelectedShapeY;
-		
+		/
 		
 		System.out.println("First X:" + firstX);
 		System.out.println("First Y:" + firstY);
 		System.out.println("Second X:" + secondX);
 		System.out.println("Second Y:" + secondY);
+		*/
 		
 		
 		this.setVisible(true);
@@ -47,8 +52,7 @@ public class UMLLine extends JPanel{
 		
 		this.setSize(sizeX, sizeY);
 		
-		
-		//this.setLocation(50, 50);
+
 	}
 
 	public void setSize()
@@ -56,128 +60,24 @@ public class UMLLine extends JPanel{
 		
 	}
 	
-	
-	
-	
-	
 	@Override
 	public void paintComponent(Graphics g)
-	{	
-		
+	{			
 		super.paintComponent(g);
 			g.setColor(Color.BLACK);
 			System.out.println("drawing a line-----------------");
 			
-			System.out.println("First X:" + firstX);
-			System.out.println("First Y:" + firstY);
-			System.out.println("Second X:" + secondX);
-			System.out.println("Second Y:" + secondY);
+			System.out.println("First X:" + firstSelectedShape.getX());
+			System.out.println("First Y:" + firstSelectedShape.getY());
+			System.out.println("Second X:" + secondSelectedShape.getX());
+			System.out.println("Second Y:" + secondSelectedShape.getY());
 			
-			g.drawLine(firstX, firstY, secondX, secondY);
 			
-			//g.drawLine(200, 200, 400, 600);
 			
-
+			
+			g.drawLine((firstSelectedShape.getX() + (firstSelectedShape.getWidth() / 2)),
+					   (firstSelectedShape.getY() + (firstSelectedShape.getHeight() / 2)),
+					   (secondSelectedShape.getX() + (secondSelectedShape.getWidth() / 2)), 
+					   (secondSelectedShape.getY() + (secondSelectedShape.getHeight() / 2)));
 	}
 }
-
-
-
-//*/
-
-/*
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.LinkedList;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-public class UMLLine extends JPanel{
-
-/**
-	 *
-	 
-	private static final long serialVersionUID = 1L;
-
-private static class Line{
-    final int x1; 
-    final int y1;
-    final int x2;
-    final int y2;   
-  //  final Color color;
-
-    public Line(int x1, int y1, int x2, int y2, Color color) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-      //  this.color = color;
-    }               
-}
-
-private final LinkedList<Line> lines = new LinkedList<Line>();
-
-public void addLine(int x1, int x2, int x3, int x4) {
-    addLine(x1, x2, x3, x4, Color.black);
-}
-
-public void addLine(int x1, int x2, int x3, int x4, Color color) {
-    lines.add(new Line(x1,x2,x3,x4, color));        
-    repaint();
-}
-
-
-@Override
-protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    for (Line line : lines) {
-       // g.setColor(line.color);
-        g.drawLine(200,200,400,600/*line.x1, line.y1, line.x2, line.y2*/
-    
-
-
-//*/
-/*
-public static void main(String[] args) {
-    JFrame testFrame = new JFrame();
-    testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    final UMLLine comp = new UMLLine();
-    comp.setPreferredSize(new Dimension(320, 200));
-    testFrame.getContentPane().add(comp, BorderLayout.CENTER);
-    JPanel buttonsPanel = new JPanel();
-    JButton newLineButton = new JButton("New Line");
-    JButton clearButton = new JButton("Clear");
-    buttonsPanel.add(newLineButton);
-    buttonsPanel.add(clearButton);
-    testFrame.getContentPane().add(buttonsPanel, BorderLayout.SOUTH);
-    newLineButton.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int x1 = (int) (Math.random()*320);
-            int x2 = (int) (Math.random()*320);
-            int y1 = (int) (Math.random()*200);
-            int y2 = (int) (Math.random()*200);
-            Color randomColor = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
-            comp.addLine(x1, y1, x2, y2, randomColor);
-        }
-    });
-    clearButton.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            comp.clearLines();
-        }
-    });
-    testFrame.pack();
-    testFrame.setVisible(true);
-}
-//*/
-//}
