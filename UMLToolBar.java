@@ -12,6 +12,7 @@ public class UMLToolBar extends JToolBar implements ActionListener{
 
 	private JToggleButton	btnShape_Class = null;
 	private JToggleButton	btnShape_Line = null;
+
 	
 	
 	UMLToolBar(String name, int type)
@@ -26,8 +27,8 @@ public class UMLToolBar extends JToolBar implements ActionListener{
 		btnShape_Line.addActionListener(this);
 
 		
+		// Create a grid bad constraints layout for this toolbar
 		GridBagConstraints   gbc = new GridBagConstraints ();
-		
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -67,6 +68,11 @@ public class UMLToolBar extends JToolBar implements ActionListener{
 	JToggleButton getBtnShape_Class()
 	{
 		return btnShape_Class;
+	}
+	
+	JToggleButton getBtnShape_Line()
+	{
+		return btnShape_Line;
 	}
 
 	@Override
